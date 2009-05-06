@@ -187,7 +187,7 @@ class Invisible
         instance_eval(&action.last)
       else
         @response.status = 404
-        @response.body   = "Not found"
+        @response.body   = "#{@request.path_info} Not found"
       end
       @response.finish
     end
