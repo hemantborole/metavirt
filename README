@@ -1,0 +1,10 @@
+Metadata Server
+===============
+
+Run with Thin:
+
+  thin start -R config.ru
+
+Or Rack rackup command, using Mongrel (by default):
+
+  rackup config.ru
