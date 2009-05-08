@@ -1,5 +1,12 @@
-Metadata Server
+MetaVirt Server
 ===============
+
+MetaVirt is a proxy providing a RESTful interface to various virtualization platforms.  It is being being written to provide a unified interface to PoolParty's various remote cloud platforms.  Currently it is being tested with PoolParty's Vmrun remoter base.
+
+
+NOTE: MetaVirt is not complete yet. It is not ready for use yet
+
+
 
 Run with Thin:
 
