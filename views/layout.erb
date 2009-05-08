@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-  <title>Invisible</title>
+  <title>MetaVirt</title>
   <link rel="stylesheet" href="/stylesheets/screen.css" type="text/css" media="screen, projection" />
   <link rel="stylesheet" href="/stylesheets/print.css" type="text/css" media="print" /> 
   <!--[if IE]>
@@ -14,7 +14,16 @@
 </head>
 <body>
   <div id="content" class="container">
-    <%= @content %>
+    <strong>Cloud Metadata Server</strong>
+    <hr>
+    <!-- <div>
+      <a href='/'>Home</a> | 
+      <a href='/instances/'>Instances</a> | 
+      <a href='/clouds/'>Clouds</a> |
+      <a href='/images/'>Images</a>
+      <a href='/remoters/'>Remoters</a>
+    </div> -->
+    <%= yield %>
   </div>
 </body>
 </html>

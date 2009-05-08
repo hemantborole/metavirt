@@ -1,5 +1,5 @@
 ENV["RACK_ENV"] = "test"
-require File.dirname(__FILE__) + "/../config/boot"
+require File.dirname(__FILE__) + "/../app.rb"
 require "invisible/mock"
 require "test/unit"
 
@@ -9,7 +9,7 @@ class Test::Unit::TestCase
   def setup
     @app = Invisible.new do
       root File.dirname(__FILE__) + "/.."
-      load "config/env"
+      load "app"
     end
   end
 end
