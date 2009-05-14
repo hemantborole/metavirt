@@ -1,4 +1,6 @@
-class CreateManagers < Sequel::Migration
+require 'sequel/extensions/migration'
+
+class InitializeDB < Sequel::Migration
   
   def up
     create_table(:instances) do
@@ -15,9 +17,14 @@ class CreateManagers < Sequel::Migration
       String :remoter_base
       String :cloud
       String :pool
-      Timestamp :updated_at
       Timestamp :created_at
+      Timestamp :updated_at
+      Timestamp :launched_at
+      Timestamp :booted_at
+      Timestamp :terminated_at
       Text :ifconfig
+      Text :remoter_base_options
+      Text :vmx_files
     end
     
     create_table :machine_images do
@@ -49,6 +56,11 @@ class CreateManagers < Sequel::Migration
       String :source_path #optional, the path the key was added from, if known
       String :sourced_from_ip #the host that the key was added form
     end
+    create_table :version do
+      Integer :version
+      Timestamp :migrated_at
+    end
+    DB[:version].insert :version=>1, :migrated_at=>Time.now
   end
   
   def down() 
