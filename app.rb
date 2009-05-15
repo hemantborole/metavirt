@@ -60,7 +60,7 @@ module MetaVirt
       Instance.all.to_json
     end
     
-    get "/instance/:id" do
+    get "/instance/:instance_id" do
       Instance.find(:instance_id=>params[:instance_id]).to_json
     end
     

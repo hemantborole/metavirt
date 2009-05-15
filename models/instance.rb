@@ -59,7 +59,11 @@ module MetaVirt
     end
     
     def terminate!
-      provider.terminate_instance!(instance_id)
+      if remoter_base == 'vmrun'
+        provider.terminate_instance!(:vmx_file=>vmx_file)
+      else
+        provider.terminate_instance!(:instance_id=>instance_id)
+      end
       update(:status=>'terminated', :terminated_at=>Time.now)      
     end
 
@@ -148,6 +152,5 @@ module MetaVirt
         
     
   end
-JSON.parse Instance.all.last.to_json
 end
 
