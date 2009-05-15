@@ -12,7 +12,6 @@ require 'sinatra'
 
 require 'sequel'
 require 'json'
-require 'cgi'
 
 Dir[File.dirname(__FILE__)+"/lib/*.rb"].each{|lib| require lib}
 Dir[File.dirname(__FILE__)+"/lib/*/*.rb"].each{|lib| require lib}
@@ -42,10 +41,6 @@ module MetaVirt
       @response['Content-Type']='text/plain'
       erb :boot_script, :layout=>:none
     end
-
-    get "/hello" do
-      erb :hello, :layout=>:none
-    end
     
     get '/pools/' do
       erb "#{pools.keys.inspect}"
@@ -66,7 +61,7 @@ module MetaVirt
     end
     
     get "/instance/:id" do
-      Instance.find(:instance_id=>CGI.unescape(params[:instance_id])).to_json
+      Instance.find(:instance_id=>params[:instance_id]).to_json
     end
     
     put( /\/run-instance|\/launch_new_instance/ ) do
@@ -90,6 +85,8 @@ module MetaVirt
     end
     
     delete '/instance/:instance_id' do
+      puts params.inspect
+      puts CGI.unescape(params[:instance_id])
       instance = Instance[:instance_id=>CGI.unescape(params[:instance_id])].terminate!
       instance.to_json
     end

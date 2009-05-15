@@ -12,7 +12,7 @@ class InitializeDB < Sequel::Migration
       String :public_ip
       String :internal_ip
       String :mac_address
-      String :keypair
+      String :keypair_name
       String :authorized_keys
       String :remoter_base
       String :cloud
@@ -24,7 +24,7 @@ class InitializeDB < Sequel::Migration
       Timestamp :terminated_at
       Text :ifconfig
       Text :remoter_base_options
-      Text :vmx_files
+      String :vmx_file
     end
     
     create_table :machine_images do

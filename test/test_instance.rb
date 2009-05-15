@@ -4,7 +4,7 @@ class TestInstance < Test::Unit::TestCase
   def setup
     @inst = Instance.create({ 
       :authorized_keys => 'ssh-rsa AAAAB3NzaAAABIwA...',
-      :keypair => 'id_rda',
+      :keypair_name => 'id_stuff',
       :image_id => 'ami-8b30d5e2',
       :remoter_base => 'vmrun',
       :created_at => Time.now
@@ -20,6 +20,12 @@ class TestInstance < Test::Unit::TestCase
     assert @inst.provider == ::PoolParty::Remote::Vmrun
   end
   
+  def test_safe_params
+    params= Instance.safe_params(:boddingtons=>'yummy', :public_ip=>'76.4.4.4')
+    assert !params.keys.include?(:boddingtons)
+    assert_equal '76.4.4.4', params[:public_ip]
+  end
+  
   def test_safe_create
     i=Instance.safe_create({:bad=>'hacked', :image_id=>'fred', :public_key=>'sshkeypub'})
     assert i.image_id = 'fred'
@@ -31,6 +37,7 @@ class TestInstance < Test::Unit::TestCase
   def test_to_json
     parsed = JSON.parse(@inst.to_json).symbolize_keys!
     assert_equal parsed.size, @inst.values.size
+    assert_equal parsed, @inst.to_hash
     @inst.values.each do |k,v|
       next if k.to_s.scan('_at').size>0
       #parsed[k] = Time.parse(parsed[k])

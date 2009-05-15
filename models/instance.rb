@@ -1,14 +1,48 @@
+require 'rubygems'
+require 'uuid'
+
 module MetaVirt
   class Instance < Sequel::Model
+    # create_table(:instances) do
+    #   primary_key :id
+    #   Integer :rank
+    #   String :instance_id
+    #   String :image_id
+    #   String :status, :default=>'pending'
+    #   String :public_ip
+    #   String :internal_ip
+    #   String :mac_address
+    #   String :keypair
+    #   String :authorized_keys
+    #   String :remoter_base
+    #   String :cloud
+    #   String :pool
+    #   Timestamp :created_at
+    #   Timestamp :updated_at
+    #   Timestamp :launched_at
+    #   Timestamp :booted_at
+    #   Timestamp :terminated_at
+    #   Text :ifconfig
+    #   Text :remoter_base_options
+    # end
     
     def self.defaults
       { :authorized_keys => '',
-        :keypair => '',
+        :keypair_name => '',
         :image_id => nil,
         :remoter_base => :vmrun,
         :created_at => Time.now,
-        :remoter_base_options => nil
+        :remoter_base_options => nil,
+        :instance_id => generate_instance_id,
+        :vmx_file => nil
        }
+    end
+    
+    def self.safe_create(params={})
+      safe_params = Instance.defaults.merge(default_params(params))
+      safe_params[:authorized_keys] << params[:public_key].to_s
+      safe_params[:remoter_base_options] = params[:remoter_base_options].to_yaml if params[:remoter_base_options]
+      Instance.create(safe_params)
     end
     
     def start!
@@ -16,7 +50,8 @@ module MetaVirt
       opts.delete(:remoter_base_options)
       opts.merge! options if options
       launched = provider.launch_new_instance!(opts).symbolize_keys!
-      set_only launched, Instance.columns
+      launched.delete(:instance_id) if remoter_base=='vmrun'
+      set Instance.safe_params(launched)
       launched_at = Time.now
       mac_address = launched.mac_address, 
       status      = 'booting'
@@ -27,18 +62,13 @@ module MetaVirt
       provider.terminate_instance!(instance_id)
       update(:status=>'terminated', :terminated_at=>Time.now)      
     end
-    
-    def self.generate_mac_address
-      require 'uuid'
-      uuid = UUID.generate.gsub(/-/, '')
-      mac = Array.new(6)
-      mac_address = mac.each_with_index{|v, i| mac[i]=uuid[i*2..i*2+1] }.join(':')
-    end
 
     def to_hash
       hsh = columns.inject({}){|h, k| h[k]=values[k];h}
       hsh[:ip]=public_ip
-      hsh
+      hsh[:keypair] = keypair_name
+      hsh.reject {|k,v| v.nil? || (v.empty? if v.respond_to? :empty)}
+      JSON.parse hsh.to_json
     end
     
     # Dump to html
@@ -64,19 +94,9 @@ module MetaVirt
     def parse_ifconfig
       self.parse_ifconfig(ifconfig)
     end
-    
-    def self.safe_create(params={})
-      safe_params = Instance.defaults.merge(default_params(params))
-      safe_params[:authorized_keys] << params[:public_key].to_s
-      safe_params[:remoter_base_options] = params[:remoter_base_options].to_yaml if params[:remoter_base_options]
-      inst = Instance.create(safe_params)
-      #set instance_id to id temporarily until real instance_id is returned from remoter_base
-      inst.update(:instance_id=>inst.id)  
-      inst
-    end
 
     def to_json
-      values.to_json
+      to_hash.to_json
     end
     
     def self.to_json(filters=nil)
@@ -92,6 +112,25 @@ module MetaVirt
     def self.default_params(params={})
       Instance.defaults.inject({}){|sum, (k,_v)| sum[k]=params[k] if params[k];sum}
     end
+    def self.safe_params(params={})
+      Instance.columns.inject({}){|sum, (k,_v)| sum[k]=params[k] if params[k];sum}
+    end
+    
+    def self.generate_instance_id
+      uuid = UUID.generate.gsub(/-/, '')
+      "i_#{uuid[0..8]}"
+    end
+    def generate_instance_id
+      self.class.generate_instance_id
+    end
+    
+    def self.generate_mac_address
+      require 'uuid'
+      uuid = UUID.generate.gsub(/-/, '')
+      mac = Array.new(6)
+      mac_address = mac.each_with_index{|v, i| mac[i]=uuid[i*2..i*2+1] }.join(':')
+    end
+    
     # Take a string and return a ruby object if  found in the namespace.
     def find_constant(name, base_object=self)
       begin
@@ -109,4 +148,6 @@ module MetaVirt
         
     
   end
+JSON.parse Instance.all.last.to_json
 end
+

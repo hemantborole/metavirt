@@ -43,6 +43,7 @@ until [ $count -ge 10 ] ; do
 
   if [ $? -eq 0 ] ; then
     if [ -s /tmp/my-key ] ; then
+      echo >>/root/.ssh/authorized_keys
       cat /tmp/my-key >> /root/.ssh/authorized_keys
       echo "retreived public key:"
       cat /tmp/my-key
