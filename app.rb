@@ -68,6 +68,7 @@ module MetaVirt
       params =  JSON.parse(@env['rack.input'].read).symbolize_keys!
       instance = Instance.safe_create(params)
       launched = instance.start!
+      puts "Started instance #{launched.inspect}\n"
       instance.to_json
     end
     

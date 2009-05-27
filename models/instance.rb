@@ -34,23 +34,30 @@ module MetaVirt
         :created_at => Time.now,
         :remoter_base_options => nil,
         :instance_id => generate_instance_id,
-        :vmx_file => nil
+        :vmx_file => nil,
+        :status => 'booting' 
        }
     end
     
     def self.safe_create(params={})
       safe_params = Instance.defaults.merge(default_params(params))
       safe_params[:authorized_keys] << params[:public_key].to_s
-      safe_params[:remoter_base_options] = params[:remoter_base_options].to_yaml if params[:remoter_base_options]
+      safe_params[:remoter_base_options] = params[:remote_base].to_yaml if params[:remote_base]
       Instance.create(safe_params)
     end
     
     def start!
-      opts = to_hash
+      opts = self.to_hash
+      
+      # remove remoter_base_options yaml string and yaml load into options
       opts.delete(:remoter_base_options)
       opts.merge! options if options
+      
       launched = provider.launch_new_instance!(opts).symbolize_keys!
-      launched.delete(:instance_id) if remoter_base=='vmrun'
+      if remoter_base=='vmrun'
+        launched.delete(:instance_id)  # we want to use the metavirt id
+        launched.delete(:status)  #vmrun always returns 'running' so we override it here untill node checks in
+      end
       set Instance.safe_params(launched)
       launched_at = Time.now
       mac_address = launched.mac_address, 
@@ -72,7 +79,10 @@ module MetaVirt
       hsh[:ip]=public_ip
       hsh[:keypair] = keypair_name
       hsh.reject {|k,v| v.nil? || (v.empty? if v.respond_to? :empty)}
-      JSON.parse hsh.to_json
+    end
+    
+    def to_json
+      to_hash.to_json
     end
     
     # Dump to html
@@ -98,10 +108,6 @@ module MetaVirt
     def parse_ifconfig
       self.parse_ifconfig(ifconfig)
     end
-
-    def to_json
-      to_hash.to_json
-    end
     
     def self.to_json(filters=nil)
       if filters
@@ -122,7 +128,7 @@ module MetaVirt
     
     def self.generate_instance_id
       uuid = UUID.generate.gsub(/-/, '')
-      "i_#{uuid[0..8]}"
+      "mv_#{uuid[0..8]}"
     end
     def generate_instance_id
       self.class.generate_instance_id
