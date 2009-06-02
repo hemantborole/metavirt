@@ -1,3 +1,6 @@
 [submodule "vendor/gems/columbus"]
 	path = vendor/gems/columbus
 	url = git://github.com/auser/columbus.git
+[submodule "vendor/gems/dnssd"]
+	path = vendor/gems/dnssd
+	url = git://github.com/technomancy/dnssd.git
