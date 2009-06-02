@@ -76,7 +76,6 @@ class TestInstance < Test::Unit::TestCase
       	supported media: autoselect      
       }
     net = Instance.parse_ifconfig(ifconfig_string)
-    p net
     assert net[:macs] == ["00:1b:fc:2e:ac:a0"]
     assert net[:ips] == ["192.168.4.10", "10.47.90.50"]
   end
