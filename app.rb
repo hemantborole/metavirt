@@ -18,7 +18,7 @@ Dir[File.dirname(__FILE__)+"/lib/*/*.rb"].each{|lib| require lib}
 
 #NOTE: This is only needed in the models, not in this file.
 $:.unshift(::File.join(::File.dirname(__FILE__), "../poolparty/lib/"))
-require "~/Code/poolparty/lib/poolparty"
+require "poolparty"
 
 DB = Sequel.connect("sqlite://db/metavirt.db") unless defined?(DB)
 Dir[File.dirname(__FILE__)+"/models/*"].each{|model| require model}
@@ -78,9 +78,9 @@ module MetaVirt
                           :mac_address=>net[:macs]]
       return @response.status=404 if !instance
       instance.update(:status=>'running',
-                      :internal_ip=>(net[:ips].first rescue nil),
-                      :public_ip=>(net[:ips].last rescue nil),
-                      :ifconfig => net[:ifconfig_data]
+                      :internal_ip => (net[:ips].first rescue nil),
+                      :public_ip   => (net[:ips].last rescue nil),
+                      :ifconfig    => net[:ifconfig_data]
                      )
       instance.authorized_keys
     end

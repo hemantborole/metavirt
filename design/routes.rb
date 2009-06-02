@@ -4,7 +4,7 @@ with '/:remote_base' do
   with '/instances/' do
     put '/booted' { i = Instance.find_and_update(params); i.authorized_keys }
     get '/:id'    { Instance[id] }
-    delete '/:id' { i=Instance[id]; i.terminate }
+    delete '/:id' { i = Instance[id]; i.terminate }
     get ''        { Instance.list }
     post ''       { i = Instance.create(params); i.start }
   end

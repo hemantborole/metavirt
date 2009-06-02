@@ -15,3 +15,10 @@ Run with Thin:
 Or Rack rackup command, using Mongrel (by default):
 
   rackup config.ru
+
+
+Gem dependencies:
+  haml
+  rack
+  sequel
+  json

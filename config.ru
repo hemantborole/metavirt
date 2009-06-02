@@ -7,18 +7,19 @@ require File.dirname(__FILE__)+"/app.rb"
 use Rack::Session::Cookie
 use Rack::Static, :urls => %w(/stylesheets /javascripts /images),
                   :root => File.dirname(__FILE__) + "/public"
-  
 RACK_ENV = ENV["RACK_ENV"] ||= "development"
 case RACK_ENV
 when 'development'
-  use Rack::Reloader
+  # use Rack::Reloaderi #tmp/always_restart.txt to reload on each request with passenger
   use Rack::ShowExceptions
   # use Rack::PostBodyContentTypeParser
   use Rack::CommonLogger
-  use Rack::Lint
+  # use Rack::Lint #doesn't work with rack
 # when 'production'
 # when 'test'
 #   use Rack::Lint
 end
+
+# Rack::Handler::Ebb
     
 run MetaVirt::MetadataServer
