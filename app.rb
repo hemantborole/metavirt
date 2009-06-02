@@ -13,6 +13,10 @@ require 'sinatra'
 require 'sequel'
 require 'json'
 
+%w(columbus).each do |lib|
+  require "#{File.dirname(__FILE__)}/vendor/gems/#{lib}/lib/#{lib}"
+end
+
 Dir[File.dirname(__FILE__)+"/lib/*.rb"].each{|lib| require lib}
 Dir[File.dirname(__FILE__)+"/lib/*/*.rb"].each{|lib| require lib}
 
@@ -25,12 +29,31 @@ Dir[File.dirname(__FILE__)+"/models/*"].each{|model| require model}
 
 module MetaVirt
   class MetadataServer < Sinatra::Base
-    SERVER_URI='http://172.16.68.2:3000' unless defined? SERVER_URI
+    SERVER_URI='http://192.168.248.1:3000' unless defined? SERVER_URI
     
     #TODO: add support for accepting clouds.rb from POST data
     # require "/Users/mfairchild/Code/poolparty_fresh/examples/metavirt_cloud.rb"
     # clouds.keys.each{|name| MetaVirt::Cloud.find_or_create(:name=>name.to_s) }
-
+    
+    configure do
+      unless $TESTING
+        Columbus::Server.name = "columbus-server"
+        Columbus::Server.description = ENV["IP"] ? ENV["IP"] : Instance.parse_ifconfig(%x{ifconfig})[:ips].last
+        
+        @continue = true
+        @pid = fork do
+           Signal.trap(:USR1) {puts "STOPPING on USR1"; exit()}
+           Signal.trap(:TERM) {puts "STOPPING on TERM"; exit()}
+           Signal.trap(:INT) {puts "STOPPING on INT"; exit()}
+           while @continue do
+             Columbus::Server.announce("vmnet8")
+             sleep(90)
+           end           
+         end
+         Process.detach(@pid)
+      end
+    end
+    
     get "/" do
       @instances = DB[:instances]
       erb :home

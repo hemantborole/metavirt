@@ -101,12 +101,24 @@ module MetaVirt
     end
     
     def self.parse_ifconfig(str)
-      ips = str.match(/inet addr:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/i).captures
+      # ips = str.match(/inet (addr:)?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/i).captures
       macs = str.match(/Ether.*((?:[0-9a-f]{2}[:-]){5}[0-9a-f]{2})/i).captures
-      {:ips=>ips, :macs=>macs}
+      {:ips=>parse_ips_from_str(str), :macs=>macs}
     end
     def parse_ifconfig
       self.parse_ifconfig(ifconfig)
+    end
+    
+    def self.parse_ips_from_str(str)
+      out = []
+      str.split("\n").collect do |line|          
+        ip = line.match(/inet (addr:)?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/i)
+        if ip
+          ip = ip.captures.compact.to_s.gsub(/addr:/, '')
+          out << ip
+        end
+      end
+      out
     end
     
     def self.to_json(filters=nil)

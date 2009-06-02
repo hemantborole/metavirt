@@ -66,10 +66,19 @@ class TestInstance < Test::Unit::TestCase
                 RX packets:6164224 errors:0 dropped:0 overruns:0 frame:0
                 TX packets:3006386 errors:0 dropped:0 overruns:0 carrier:0
                 collisions:0 txqueuelen:0 
-                RX bytes:7042505941 (7.0 GB)  TX bytes:2423030352 (2.4 GB)}
+                RX bytes:7042505941 (7.0 GB)  TX bytes:2423030352 (2.4 GB)
+                
+      en1: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+      	inet6 fe80::223:6cff:fe8d:c8cc%en1 prefixlen 64 scopeid 0x8 
+      	inet 10.47.90.50 netmask 0xfffffe00 broadcast 10.47.91.255
+      	ether 00:23:6c:8d:c8:cc 
+      	media: autoselect status: active
+      	supported media: autoselect      
+      }
     net = Instance.parse_ifconfig(ifconfig_string)
-    assert net[:macs].first == '00:1b:fc:2e:ac:a0'
-    assert net[:ips].first == '192.168.4.10'
+    p net
+    assert net[:macs] == ["00:1b:fc:2e:ac:a0"]
+    assert net[:ips] == ["192.168.4.10", "10.47.90.50"]
   end
     
 end

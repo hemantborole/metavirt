@@ -20,3 +20,25 @@ end
 # end
 # task :default => :test
 
+namespace(:db) do
+  desc "Clear the db"
+  task :clear do
+    FileUtils.rm File.join([File.dirname(__FILE__), "db/metavirt.db"])
+  end
+  desc "Migrate the db"
+  task :migrate do
+    `sequel sqlite://db/metavirt.db -m db/migrations`
+  end
+  desc "Reset, clear and migrate the db"
+  task :reset => [:clear, :migrate]
+end
+
+desc "Start the server"
+task :start do
+  `thin start -R config.ru`
+end
+
+namespace :dev do
+  desc "Reset database and start"
+  task :go => ["db:reset", :start]
+end
