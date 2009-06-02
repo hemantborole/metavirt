@@ -37,3 +37,8 @@ desc "Start the server"
 task :start do
   `thin start -R config.ru`
 end
+
+namespace :dev do
+  desc "Reset database and start"
+  task :go => ["db:reset", :start]
+end
