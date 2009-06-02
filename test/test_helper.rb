@@ -6,6 +6,8 @@ require 'mocha'
 require 'sequel'
 require 'uuid'
 
+$TESTING = true
+
 require File.dirname(__FILE__)+"/../db/migrations/01_initialize_db.rb"
 DB = Sequel.sqlite unless defined?(DB)
 InitializeDB.apply(DB, :up) unless DB.tables.include?(:version)
@@ -44,7 +46,7 @@ class MockRemoter
   end
   
   def describe_instance(id)
-    (@inst ||= self.class.generate_hash
+    @inst ||= self.class.generate_hash
   end
   
   def describe_instances(o={})

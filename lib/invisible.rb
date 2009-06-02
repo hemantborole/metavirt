@@ -1,4 +1,4 @@
-%w(rubygems time rack markaby invisible/core_ext invisible/helpers).each { |f| require f }
+%w(rubygems time rack sinatra).each { |f| require f }
 # = The Invisible Framework
 # Invisible is like a giant robot combining the awesomeness of Rails,
 # Merb, Camping and Sinatra. Except, it's tiny (100 sloc).

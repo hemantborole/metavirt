@@ -1,0 +1,3 @@
+[submodule "vendor/gems/columbus"]
+	path = vendor/gems/columbus
+	url = git://github.com/auser/columbus.git
