@@ -4,3 +4,6 @@
 [submodule "vendor/gems/dnssd"]
 	path = vendor/gems/dnssd
 	url = git://github.com/technomancy/dnssd.git
+[submodule "vendor/gems/sinatra"]
+	path = vendor/gems/sinatra
+	url = git://github.com/sinatra/sinatra.git
