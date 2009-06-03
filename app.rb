@@ -13,6 +13,8 @@ require 'sinatra'
 require 'sequel'
 require 'json'
 
+require "log"
+
 %w(columbus).each do |lib|
   require "#{File.dirname(__FILE__)}/vendor/gems/#{lib}/lib/#{lib}"
 end
@@ -36,16 +38,17 @@ module MetaVirt
     # clouds.keys.each{|name| MetaVirt::Cloud.find_or_create(:name=>name.to_s) }
     
     configure do
+      Metavirt::Log.init "metavirt", "#{Dir.pwd}/log"
+      
       unless $TESTING
         Columbus::Server.name = "columbus-server"
-        Columbus::Server.description = ENV["IP"] ? ENV["IP"] : Instance.parse_ifconfig(%x{ifconfig})[:ips].last
+        Columbus::Server.description = ENV["IP"] ? ENV["IP"] : Instance.parse_ifconfig(%x{ifconfig})[:ips].values.last
         
-        @continue = true
         @pid = fork do
            Signal.trap(:USR1) {puts "STOPPING on USR1"; exit()}
            Signal.trap(:TERM) {puts "STOPPING on TERM"; exit()}
            Signal.trap(:INT) {puts "STOPPING on INT"; exit()}
-           while @continue do
+           while true do
              Columbus::Server.announce("vmnet8")
              sleep(90)
            end           
@@ -96,15 +99,21 @@ module MetaVirt
     end
     
     post "/instances/booted" do
-      net = Instance.parse_ifconfig(ifconfig_data = @env['rack.input'].read)
+      ifconfig_data = @env['rack.input'].read
+      i_to_i = Instance.map_ip_to_interface(ifconfig_data)
+      Metavirt::Log.info "Instance i_to_i: #{i_to_i.inspect} ==\n\n#{ifconfig_data}"
+      net = Instance.parse_ifconfig(ifconfig_data)
+      Metavirt::Log.info "Instance map_ip_to_interface: #{net.inspect}"
       instance = Instance[:status=>['booting', 'pending', 'running'],
                           :mac_address=>net[:macs]]
+      Metavirt::Log.info "Instance is: #{instance.inspect}"
       return @response.status=404 if !instance
       instance.update(:status=>'running',
-                      :internal_ip=>(net[:ips].first rescue nil),
-                      :public_ip=>(net[:ips].last rescue nil),
+                      :internal_ip=>(net[:ips]["eth0"] rescue nil),
+                      :public_ip=>(net[:ips]["eth0"] rescue nil),
                       :ifconfig => net[:ifconfig_data]
                      )
+      Metavirt::Log.info "Instance updated: #{instance.inspect}"
       instance.authorized_keys
     end
     
