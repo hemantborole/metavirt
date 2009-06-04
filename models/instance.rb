@@ -2,6 +2,7 @@ require 'rubygems'
 require 'uuid'
 $:.unshift(::File.join(::File.dirname(__FILE__), "/vendor/gems/poolparty/lib/"))
 require "poolparty"
+require "macmap"
 
 module MetaVirt
   class Instance < Sequel::Model
@@ -106,7 +107,7 @@ module MetaVirt
     def self.parse_ifconfig(str)
       # ips = str.match(/inet (addr:)?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/i).captures
       macs = str.match(/Ether.*((?:[0-9a-f]{2}[:-]){5}[0-9a-f]{2})/i).captures
-      {:ips=>parse_ips_from_str(str), :macs=>macs}
+      {:ips=>map_ip_to_interface(str), :macs=>macs}
     end
     def parse_ifconfig
       self.parse_ifconfig(ifconfig)
@@ -122,6 +123,10 @@ module MetaVirt
         end
       end
       out
+    end
+    
+    def self.map_ip_to_interface(str=ifconfig)
+      Macmap.map_iface_to_ip str
     end
     
     def self.to_json(filters=nil)

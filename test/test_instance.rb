@@ -59,25 +59,28 @@ class TestInstance < Test::Unit::TestCase
     
   def test_parse_ifconfig
     ifconfig_string = %q{
-      eth0      Link encap:Ethernet  HWaddr 00:1b:fc:2e:ac:a0  
-                inet addr:192.168.4.10  Bcast:192.168.4.255  Mask:255.255.255.0
-                inet6 addr: fe80::21b:fcff:fe2e:aca0/64 Scope:Link
-                UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-                RX packets:6164224 errors:0 dropped:0 overruns:0 frame:0
-                TX packets:3006386 errors:0 dropped:0 overruns:0 carrier:0
-                collisions:0 txqueuelen:0 
-                RX bytes:7042505941 (7.0 GB)  TX bytes:2423030352 (2.4 GB)
-                
-      en1: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-      	inet6 fe80::223:6cff:fe8d:c8cc%en1 prefixlen 64 scopeid 0x8 
-      	inet 10.47.90.50 netmask 0xfffffe00 broadcast 10.47.91.255
-      	ether 00:23:6c:8d:c8:cc 
-      	media: autoselect status: active
-      	supported media: autoselect      
+eth0      Link encap:Ethernet  HWaddr 00:0c:29:f5:d1:9f  
+          inet addr:192.168.248.133  Bcast:192.168.248.255  Mask:255.255.255.0
+          inet6 addr: fe80::20c:29ff:fef5:d19f/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:2674 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:1860 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:1644612 (1.6 MB)  TX bytes:234972 (234.9 KB)
+          Interrupt:19 Base address:0x2000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
       }
     net = Instance.parse_ifconfig(ifconfig_string)
-    assert net[:macs] == ["00:1b:fc:2e:ac:a0"]
-    assert net[:ips] == ["192.168.4.10", "10.47.90.50"]
+    assert_equal ["00:0c:29:f5:d1:9f"], net[:macs]
+    assert_equal ["127.0.0.1", "192.168.248.133"], net[:ips].values
   end
     
 end

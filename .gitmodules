@@ -10,3 +10,6 @@
 [submodule "vendor/gems/poolparty"]
 	path = vendor/gems/poolparty
 	url = git://github.com/auser/poolparty.git
+[submodule "vendor/gems/macmap"]
+	path = vendor/gems/macmap
+	url = git://github.com/auser/macmap.git
