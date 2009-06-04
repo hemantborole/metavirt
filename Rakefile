@@ -23,7 +23,8 @@ end
 namespace(:db) do
   desc "Clear the db"
   task :clear do
-    FileUtils.rm File.join([File.dirname(__FILE__), "db/metavirt.db"])
+    dbfile = File.join(File.dirname(__FILE__), "db", "metavirt.db")
+    File.delete(dbfile) if File.file?(dbfile)
   end
   desc "Migrate the db"
   task :migrate do

@@ -1,5 +1,7 @@
 require 'rubygems'
 require 'uuid'
+$:.unshift(::File.join(::File.dirname(__FILE__), "/vendor/gems/poolparty/lib/"))
+require "poolparty"
 
 module MetaVirt
   class Instance < Sequel::Model
@@ -48,7 +50,7 @@ module MetaVirt
     
     def start!
       opts = self.to_hash
-      
+      puts opts.inspect
       # remove remoter_base_options yaml string and yaml load into options
       opts.delete(:remoter_base_options)
       opts.merge! options if options
@@ -78,6 +80,7 @@ module MetaVirt
       hsh = columns.inject({}){|h, k| h[k]=values[k];h}
       hsh[:ip]=public_ip
       hsh[:keypair] = keypair_name
+      hsh.delete(:id)
       hsh.reject {|k,v| v.nil? || (v.empty? if v.respond_to? :empty)}
     end
     

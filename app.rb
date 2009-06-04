@@ -2,27 +2,14 @@ require "rubygems"
 require 'ruby-debug'
 require 'pp'
 $:.unshift File.dirname(__FILE__) + "/lib"
-$:.unshift File.dirname(__FILE__)
-# require 'rack_response_callbacks'
-# require 'invisible'
-# require "invisible/erb"
-# require "invisible/erubis" Remove erb if you uncomment this
-# require "invisible/haml"
-require 'sinatra'
-
-require 'sequel'
-require 'json'
-
-%w(columbus).each do |lib|
-  require "#{File.dirname(__FILE__)}/vendor/gems/#{lib}/lib/#{lib}"
+Dir["#{File.dirname(__FILE__)}/vendor/gems/*/lib"].each do |lib|
+  $:.unshift lib
 end
+$:.unshift File.dirname(__FILE__)
+gems = %w(sinatra sequel json dnssd columbus).each {|gem| require gem}
 
 Dir[File.dirname(__FILE__)+"/lib/*.rb"].each{|lib| require lib}
 Dir[File.dirname(__FILE__)+"/lib/*/*.rb"].each{|lib| require lib}
-
-#NOTE: This is only needed in the models, not in this file.
-$:.unshift(::File.join(::File.dirname(__FILE__), "../poolparty/lib/"))
-require "poolparty"
 
 DB = Sequel.connect("sqlite://db/metavirt.db") unless defined?(DB)
 Dir[File.dirname(__FILE__)+"/models/*"].each{|model| require model}
