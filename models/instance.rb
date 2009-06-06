@@ -55,15 +55,14 @@ module MetaVirt
       # remove remoter_base_options yaml string and yaml load into options
       opts.delete(:remoter_base_options)
       opts.merge! options if options
-      
-      launched = provider.launch_new_instance!(opts).symbolize_keys!
+      launched = provider.launch_new_instance!(opts)
+      launched.symbolize_keys! if launched.respond_to? :symbolize_keys!
       if remoter_base=='vmrun'
         launched.delete(:instance_id)  # we want to use the metavirt id
         launched.delete(:status)  #vmrun always returns 'running' so we override it here untill node checks in
       end
       set Instance.safe_params(launched)
       launched_at = Time.now
-      mac_address = launched.mac_address, 
       status      = 'booting'
       save
     end
@@ -74,7 +73,7 @@ module MetaVirt
       else
         provider.terminate_instance!(:instance_id=>instance_id)
       end
-      update(:status=>'terminated', :terminated_at=>Time.now)      
+      update(:status=>'terminated', :terminated_at=>Time.now)
     end
 
     def to_hash
@@ -143,7 +142,9 @@ module MetaVirt
       Instance.defaults.inject({}){|sum, (k,_v)| sum[k]=params[k] if params[k];sum}
     end
     def self.safe_params(params={})
-      Instance.columns.inject({}){|sum, (k,_v)| sum[k]=params[k] if params[k];sum}
+      cols = Instance.columns.inject({}){|sum, (k,_v)| sum[k]=params[k] if params[k];sum}
+      cols.delete(:id)
+      cols
     end
     
     def self.generate_instance_id

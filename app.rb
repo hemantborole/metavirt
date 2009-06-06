@@ -16,7 +16,7 @@ Dir[File.dirname(__FILE__)+"/models/*"].each{|model| require model}
 
 module MetaVirt
   class MetadataServer < Sinatra::Base
-    SERVER_URI='http://192.168.248.1:3000' unless defined? SERVER_URI
+    SERVER_URI='http://192.168.4.4.10:3000' unless defined? SERVER_URI
     
     #TODO: add support for accepting clouds.rb from POST data
     # require "/Users/mfairchild/Code/poolparty_fresh/examples/metavirt_cloud.rb"
@@ -47,7 +47,7 @@ module MetaVirt
       erb :home
     end
     
-    get '/boot_script' do
+    get '/bootstrap' do
       # @host = "#{@env['rack.url_scheme']}//#{@env['HTTP_HOST']}".strip
       @response['Content-Type']='text/plain'
       erb :boot_script, :layout=>:none
@@ -90,7 +90,7 @@ module MetaVirt
       net = Instance.parse_ifconfig(ifconfig_data)
       Metavirt::Log.info "Instance map_ip_to_interface: #{net.inspect}"
       instance = Instance[:status=>['booting', 'pending', 'running'],
-                          :mac_address=>net[:macs]]
+                          :mac_address=>[net[:macs]] ] 
       Metavirt::Log.info "Instance is: #{instance.inspect}"
       return @response.status=404 if !instance
       instance.update(:status=>'running',
