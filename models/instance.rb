@@ -32,7 +32,7 @@ module MetaVirt
     # Overload save to save to cloudkit also
     def save(*args, &block)
       super
-      require 'rest-client'
+      # require 'rest-client'
     end
     
     def self.defaults
