@@ -29,6 +29,12 @@ module MetaVirt
     #   Text :remoter_base_options
     # end
     
+    # Overload save to save to cloudkit also
+    def save(*args, &block)
+      super
+      require 'rest-client'
+    end
+    
     def self.defaults
       { :authorized_keys => '',
         :keypair_name => '',

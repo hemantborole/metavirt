@@ -47,10 +47,16 @@ module MetaVirt
       erb :home
     end
     
-    get '/bootstrap' do
+    get '/boot_script' do
       # @host = "#{@env['rack.url_scheme']}//#{@env['HTTP_HOST']}".strip
       @response['Content-Type']='text/plain'
       erb :boot_script, :layout=>:none
+    end
+    
+    get '/bootstrap' do
+      # @host = "#{@env['rack.url_scheme']}//#{@env['HTTP_HOST']}".strip
+      @response['Content-Type']='text/plain'
+      erb :bootstrap, :layout=>:none
     end
     
     get '/pools/' do
