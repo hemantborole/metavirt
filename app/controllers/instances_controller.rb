@@ -1,5 +1,8 @@
 module MetaVirt
   class InstancesController < Sinatra::Base
+    configure do
+      set :views, File.dirname(__FILE__) + '/../views/instances/'
+    end
     
     get '/' do
       Instance.all.to_json

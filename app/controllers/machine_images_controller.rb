@@ -1,8 +1,15 @@
 module MetaVirt
-  module MachineImagesController
+  class MachineImagesController < Sinatra::Base
+    configure do
+      set :views, File.dirname(__FILE__) + '/../views/machine_images/'
+    end
     
-    get '/machine_images/new' do
-      erb 'machine_images/new'.to_sym
+    get '/' do
+      erb :index
+    end
+    
+    get '/new' do
+      erb :new
     end
     
   end
