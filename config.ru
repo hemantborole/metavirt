@@ -2,6 +2,7 @@ require "rubygems"
 require 'rack'
 # require 'rack/contrib'
 require File.dirname(__FILE__)+"/app.rb"
+disable :run
 
 # use Rack::BounceFavicon
 use Rack::Session::Cookie
@@ -20,6 +21,16 @@ when 'development'
 #   use Rack::Lint
 end
 
+map "/" do
+  run MetaVirt::MetadataServer
+end
+
+map "/instances" do
+  run MetaVirt::InstancesController
+end 
+map "/machine_images" do
+   run MetaVirt::MachineImagesController
+end
+
+
 # Rack::Handler::Ebb
-    
-run MetaVirt::MetadataServer

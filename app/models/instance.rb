@@ -32,7 +32,27 @@ module MetaVirt
     # Overload save to save to cloudkit also
     def save(*args, &block)
       super
-      # require 'rest-client'
+      begin
+        require 'restclient'
+        server["/instances/#{instance_id}"].put(to_json)
+      rescue Exception => e
+        Metavirt::Log.error "cloudkit fail:\n\t#{e.inspect}"
+      end
+      self
+    end
+    
+    def server(server_config={})
+      if @server
+        @server
+      else
+        opts = { :content_type  =>'application/json', 
+                 :accept        => 'application/json',
+                 :host          => 'http://localhost',
+                 :port          => '3002'
+                }.merge(server_config)
+        @uri = "#{opts.delete(:host)}:#{opts.delete(:port)}"
+        @server = RestClient::Resource.new( @uri, opts)
+      end
     end
     
     def self.defaults
