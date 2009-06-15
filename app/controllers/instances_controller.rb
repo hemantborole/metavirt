@@ -3,7 +3,12 @@ module MetaVirt
     configure do
       set :views, File.dirname(__FILE__) + '/../views/instances/'
     end
-    
+        # 
+        # get "/" do
+        #   @instances = DB[:instances]
+        #   erb :home
+        # end
+        
     get '/' do
       Instance.all.to_json
     end
