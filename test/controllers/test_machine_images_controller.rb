@@ -14,12 +14,15 @@ class TestMachineImagesController < Test::Unit::TestCase
   end
 
   def test_post
-    MachineImage.any_instance.stubs(:repository).returns('/tmp')
+    MachineImage.stubs(:repository).returns('/tmp')
+    assert_equal '/tmp', MachineImage.repository 
+    assert_equal '/tmp', MachineImage.new.repository
     bundle = Rack::Test::UploadedFile.new(File.dirname(__FILE__)+'/../fixtures/fake_machine_bundle.tgz')
     post('/', :image_file => bundle)
     assert last_response.ok?
-    p last_response.body
-    assert File.delete "/tmp/#{last_response.body}"
+    body =  JSON.parse(last_response.body).first
+    assert MachineImage.list.include? body
+    assert File.delete "/tmp/#{body}"
   end
    
 end

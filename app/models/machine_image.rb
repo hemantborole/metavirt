@@ -10,8 +10,14 @@ module MetaVirt
     attr_reader :repository
     attr_accessor :name
     
+    @repository =  File.dirname(__FILE__)+'/../../machine_images/'
+
+    class << self
+      attr_reader :repository
+    end
+
     def initialize(options={})
-      @repository = options[:repository] || File.dirname(__FILE__)+'/../../machine_images/'
+      @repository = options[:repository] || self.class.repository
     end
     
     def register_image(opts={})
@@ -20,5 +26,9 @@ module MetaVirt
       FileUtils.copy_file(options[:file].path, "#{repository}/#{@name}")
     end
   
+    def self.list
+      Dir["#{repository}/mvi_*"].collect {|f| f.split('/').last }
+    end
+
   end
 end

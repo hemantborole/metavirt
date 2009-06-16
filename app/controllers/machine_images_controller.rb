@@ -16,7 +16,7 @@ module MetaVirt
       puts params
       mi = MachineImage.new
       mi.register_image :file=>params[:image_file][:tempfile]
-      mi.name
+      [mi.name].to_json
     end
     
   end
