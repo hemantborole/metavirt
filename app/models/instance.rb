@@ -41,6 +41,7 @@ module MetaVirt
       self
     end
     
+    # server is used if you want to also store instance information in cloudkit
     def server(server_config={})
       if @server
         @server

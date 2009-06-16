@@ -14,7 +14,9 @@ module MetaVirt
     end
     
     get "/:instance_id" do
-      Instance.find(:instance_id=>params[:instance_id]).to_json
+      inst = Instance.find(:instance_id=>params[:instance_id])
+      response.status=404 if inst.nil?
+      inst.to_json
     end
     
     post "/booted" do
