@@ -1,6 +1,6 @@
 ENV["RACK_ENV"] = "test"
 require 'rubygems'
-# require "test/unit"
+require "test/unit"
 require 'mocha'
 require 'sequel'
 require 'ruby-debug'

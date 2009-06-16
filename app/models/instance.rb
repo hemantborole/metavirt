@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'uuid'
-$:.unshift(::File.join(::File.dirname(__FILE__), "/vendor/gems/poolparty/lib/"))
-require "poolparty"
+# $:.unshift(::File.join(::File.dirname(__FILE__), "/vendor/gems/poolparty/lib/"))
+# require "poolparty"
 require "macmap"
 
 module MetaVirt

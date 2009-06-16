@@ -2,7 +2,7 @@ require "rubygems"
 require 'ruby-debug'
 require 'pp'
 $:.unshift File.dirname(__FILE__) + "/lib"
-Dir["#{File.dirname(__FILE__)}/vendor/gems/*/lib"].each do |lib|
+Dir["#{File.dirname(__FILE__)}/vendor/gems/*/lib/"].each do |lib|
   $:.unshift lib
 end
 $:.unshift File.dirname(__FILE__)

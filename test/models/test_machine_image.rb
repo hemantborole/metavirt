@@ -2,11 +2,14 @@ require File.dirname(__FILE__) + "/../test_helper"
 
 class TestMachineImage < Test::Unit::TestCase
   def setup
-   
   end
   
-  def test_should_be_able_register_a_new_image
+  def test_register_new_image
+    puts 'sasdfas'
   end
+  
+  
+
   
   # def test_should_be_able_to_create_new_domain_xml_from_image
   # end
