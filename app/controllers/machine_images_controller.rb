@@ -12,5 +12,12 @@ module MetaVirt
       erb :new
     end
     
+    post '/' do
+      puts params
+      mi = MachineImage.new
+      mi.register_image :file=>params[:image_file][:tempfile]
+      mi.name
+    end
+    
   end
 end

@@ -22,9 +22,6 @@ class TestInstancesController < Test::Unit::TestCase
     get("/#{@instance.instance_id}")
   end
   
-  
-  
-  # 
   def test_should_get_new_image_page
      # assert get("/")
    end

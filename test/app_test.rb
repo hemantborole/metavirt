@@ -12,8 +12,5 @@ class AppTest < Test::Unit::TestCase
     get("/")
     assert last_response.ok?
   end
-
-  # def test_should_post_a_new_image
-  #   assert put("/machine_images/", :xml_definition=>"/tmp/file.xml")
-  # end 
+  
 end
